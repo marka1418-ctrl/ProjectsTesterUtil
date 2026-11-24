@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../ProjectTestingUtility/Models/Settings.cs" Link="Settings.cs" />
+    <Compile Include="../../ProjectTestingUtility/Models/TokenInfo.cs" Link="TokenInfo.cs" />
+    <Compile Include="../../ProjectTestingUtility/Services/AuthorizationService.cs" Link="AuthorizationService.cs" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
+  </ItemGroup>
+</Project>

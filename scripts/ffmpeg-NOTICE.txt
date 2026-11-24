@@ -1,0 +1,29 @@
+FFmpeg is a separate command-line program used to record diagnostic retries.
+It is invoked as a child process and is not linked into ProjectTestingUtility.
+
+Build: FFmpeg 8.1.2, Gyan essentials, Windows x64, static.
+Publisher: https://www.gyan.dev/ffmpeg/builds/
+Release: https://github.com/GyanD/codexffmpeg/releases/tag/8.1.2
+License: GNU General Public License version 3 or later (see LICENSE).
+Copyright: the FFmpeg developers and the authors of included libraries.
+Upstream README.txt is included unchanged.
+
+The exact downloaded archive URL, SHA-256 digest, executable digest and
+FFmpeg source revision are recorded in manifest.json. The executable's
+version and configure arguments are recorded in BUILD-CONFIGURATION.txt.
+FFmpeg source revision: https://github.com/FFmpeg/FFmpeg/tree/38b88335f9
+FFmpeg source archive: https://github.com/FFmpeg/FFmpeg/archive/38b88335f9.tar.gz
+
+This static build includes third-party libraries (including libx264), as
+listed in BUILD-CONFIGURATION.txt. The FFmpeg source archive above alone
+does not include the corresponding source of all those libraries or the
+publisher's complete build scripts. It is a source reference, not a
+complete corresponding-source distribution or a written source offer.
+
+Before distributing this binary beyond internal validation, the distributor
+must provide the matching complete corresponding source and build scripts
+under GPLv3 section 6, for example alongside the binary download, preserving
+the required notices and licenses. Obtain those sources from the build
+publisher, or build FFmpeg from source and retain the exact source,
+dependencies, patches and build instructions used for the shipped binary.
+See https://ffmpeg.org/legal.html and the included LICENSE.

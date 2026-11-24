@@ -1,0 +1,701 @@
+<Window x:Class="ProjectTesterMonitor.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Settings" Width="720" Height="680" 
+        WindowStyle="None" ResizeMode="CanResize" 
+        AllowsTransparency="True" Background="Transparent"
+        MouseDown="Window_MouseDown"
+        KeyDown="Window_KeyDown">
+    
+    <Window.Resources>
+        <!-- ENCY 3 palette -->
+        <Color x:Key="AccentBlue">#7A5AF8</Color>
+        <Color x:Key="LabelPrimary">#201B33</Color>
+        <Color x:Key="LabelSecondary">#837D96</Color>
+        <Color x:Key="BackgroundSecondary">#F6F4FB</Color>
+        <Color x:Key="SeparatorColor">#E7E3F2</Color>
+        
+        <SolidColorBrush x:Key="AccentBlueBrush" Color="{StaticResource AccentBlue}"/>
+        <SolidColorBrush x:Key="LabelPrimaryBrush" Color="{StaticResource LabelPrimary}"/>
+        <SolidColorBrush x:Key="LabelSecondaryBrush" Color="{StaticResource LabelSecondary}"/>
+        <SolidColorBrush x:Key="BackgroundSecondaryBrush" Color="{StaticResource BackgroundSecondary}"/>
+        <SolidColorBrush x:Key="SeparatorBrush" Color="{StaticResource SeparatorColor}"/>
+
+        <!-- Apple-style ScrollBar -->
+        <Style x:Key="AppleScrollBarThumb" TargetType="Thumb">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Border Background="#C9C3DC" CornerRadius="3" Margin="2"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="ScrollBar">
+            <Setter Property="Width" Value="8"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ScrollBar">
+                        <Grid>
+                            <Track x:Name="PART_Track" IsDirectionReversed="true">
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource AppleScrollBarThumb}"/>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="Orientation" Value="Horizontal">
+                    <Setter Property="Width" Value="Auto"/>
+                    <Setter Property="Height" Value="8"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ScrollBar">
+                                <Grid>
+                                    <Track x:Name="PART_Track" IsDirectionReversed="false">
+                                        <Track.Thumb>
+                                            <Thumb Style="{StaticResource AppleScrollBarThumb}"/>
+                                        </Track.Thumb>
+                                    </Track>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Apple-style Slider -->
+        <Style x:Key="AppleSliderThumb" TargetType="Thumb">
+            <Setter Property="Width" Value="20"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Grid>
+                            <!-- Shadow -->
+                            <Ellipse Fill="#20000000" Width="22" Height="22" Margin="-1,-1,0,0"/>
+                            <!-- Main circle -->
+                            <Ellipse x:Name="thumbCircle" Fill="White" Width="20" Height="20"
+                                     Stroke="#E7E3F2" StrokeThickness="0.5">
+                                <Ellipse.Effect>
+                                    <DropShadowEffect Color="#000000" BlurRadius="4" ShadowDepth="1" Opacity="0.15"/>
+                                </Ellipse.Effect>
+                            </Ellipse>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="thumbCircle" Property="Fill" Value="#FBFAFE"/>
+                            </Trigger>
+                            <Trigger Property="IsDragging" Value="True">
+                                <Setter TargetName="thumbCircle" Property="Fill" Value="#F2F0F8"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="AppleSliderRepeatButton" TargetType="RepeatButton">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border Background="Transparent" Height="4"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="AppleSliderRepeatButtonFilled" TargetType="RepeatButton">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="Focusable" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border Background="{StaticResource AccentBlueBrush}" Height="4" CornerRadius="2"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style TargetType="Slider">
+            <Setter Property="Height" Value="24"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Slider">
+                        <Grid VerticalAlignment="Center">
+                            <!-- Track background -->
+                            <Border Height="4" CornerRadius="2" Background="#E7E3F2" VerticalAlignment="Center" Margin="10,0"/>
+                            <!-- Track for thumb positioning -->
+                            <Track x:Name="PART_Track" Margin="10,0">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Style="{StaticResource AppleSliderRepeatButtonFilled}" Command="Slider.DecreaseLarge"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Style="{StaticResource AppleSliderRepeatButton}" Command="Slider.IncreaseLarge"/>
+                                </Track.IncreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource AppleSliderThumb}" Cursor="Hand"/>
+                                </Track.Thumb>
+                            </Track>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Apple-style Button -->
+        <Style TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource BackgroundSecondaryBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource LabelPrimaryBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="14,8"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#E7E3F2"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#D3CEE3"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Apple-style Primary Button -->
+        <Style x:Key="PrimaryButton" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource AccentBlueBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="20,8"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="bd" Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#6B48E8"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="bd" Property="Background" Value="#5B39D6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Apple-style TextBox -->
+        <Style TargetType="TextBox">
+            <Setter Property="Background" Value="{StaticResource BackgroundSecondaryBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="{StaticResource LabelPrimaryBrush}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Apple-style PasswordBox -->
+        <Style TargetType="PasswordBox">
+            <Setter Property="Background" Value="{StaticResource BackgroundSecondaryBrush}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="{StaticResource LabelPrimaryBrush}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="PasswordBox">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6" Padding="{TemplateBinding Padding}">
+                            <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Apple-style CheckBox -->
+        <Style TargetType="CheckBox">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="CheckBox">
+                        <Grid>
+                            <Border x:Name="track" Width="36" Height="20" CornerRadius="10" Background="#E7E3F2" Cursor="Hand"/>
+                            <Border x:Name="thumb" Width="16" Height="16" CornerRadius="8" Background="White" HorizontalAlignment="Left" Margin="2,0,0,0">
+                                <Border.Effect>
+                                    <DropShadowEffect ShadowDepth="1" BlurRadius="3" Opacity="0.3"/>
+                                </Border.Effect>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="track" Property="Background" Value="#34C759"/>
+                                <Setter TargetName="thumb" Property="HorizontalAlignment" Value="Right"/>
+                                <Setter TargetName="thumb" Property="Margin" Value="0,0,2,0"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- Close Button Style -->
+        <Style x:Key="CloseButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="12"/>
+            <Setter Property="Height" Value="12"/>
+            <Setter Property="Background" Value="#FF5F57"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid>
+                            <Ellipse x:Name="circle" Fill="{TemplateBinding Background}"/>
+                            <TextBlock x:Name="icon" Text="×" FontSize="10" FontWeight="Bold" Foreground="Transparent" 
+                                       HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-2,0,0"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="icon" Property="Foreground" Value="#4D0000"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <!-- Main Container -->
+    <Border CornerRadius="12" Background="White" BorderBrush="#E7E3F2" BorderThickness="1">
+        <Border.Effect>
+            <DropShadowEffect BlurRadius="20" ShadowDepth="0" Opacity="0.15"/>
+        </Border.Effect>
+
+        <Grid>
+            <!-- Window Controls -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,16,16,0" Panel.ZIndex="100">
+                <Button x:Name="CloseBtn" Style="{StaticResource CloseButtonStyle}" Click="CloseBtn_Click"/>
+            </StackPanel>
+
+            <Grid Margin="20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Header -->
+                <Grid Grid.Row="0" Margin="0,0,0,16">
+                    <TextBlock Text="Settings" FontSize="22" FontWeight="SemiBold" Foreground="{StaticResource LabelPrimaryBrush}" 
+                               HorizontalAlignment="Center" Margin="0,8,0,0"/>
+                </Grid>
+
+                <!-- Main Content -->
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="10,0">
+                    <StackPanel>
+                        <!-- Timeouts Section -->
+                        <TextBlock Text="TIMEOUTS" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource LabelSecondaryBrush}" Margin="0,8,0,12"/>
+                        
+                        <Border Background="{StaticResource BackgroundSecondaryBrush}" CornerRadius="10" Padding="16,8" Margin="0,0,0,16">
+                            <StackPanel>
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Launch CAM (sec)" VerticalAlignment="Center" Foreground="{StaticResource LabelPrimaryBrush}"/>
+                                    <TextBox x:Name="LaunchCamTimeout" Grid.Column="1"/>
+                                </Grid>
+                                <Border Height="1" Background="{StaticResource SeparatorBrush}" Margin="0,4"/>
+                                
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Open Project (sec)" VerticalAlignment="Center" Foreground="{StaticResource LabelPrimaryBrush}"/>
+                                    <TextBox x:Name="OpenProjectTimeout" Grid.Column="1"/>
+                                </Grid>
+                                <Border Height="1" Background="{StaticResource SeparatorBrush}" Margin="0,4"/>
+                                
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Test Project (sec)" VerticalAlignment="Center" Foreground="{StaticResource LabelPrimaryBrush}"/>
+                                    <TextBox x:Name="TestProjectTimeout" Grid.Column="1"/>
+                                </Grid>
+                                <Border Height="1" Background="{StaticResource SeparatorBrush}" Margin="0,4"/>
+                                
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Kill CAM Process (sec)" VerticalAlignment="Center" Foreground="{StaticResource LabelPrimaryBrush}"/>
+                                    <TextBox x:Name="KillCamProcessTimeout" Grid.Column="1"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Options Section -->
+                        <TextBlock Text="OPTIONS" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource LabelSecondaryBrush}" Margin="0,8,0,12"/>
+                        
+                        <Border Background="{StaticResource BackgroundSecondaryBrush}" CornerRadius="10" Padding="16,8" Margin="0,0,0,16">
+                            <StackPanel>
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Use Job Mode" VerticalAlignment="Center" Foreground="{StaticResource LabelPrimaryBrush}"/>
+                                    <CheckBox x:Name="UseJobMode" Grid.Column="1"/>
+                                </Grid>
+                                <CheckBox x:Name="ValidateBackgroundSimulation" Content="Validate background collision statuses" Margin="0,8"
+                                          ToolTip="Uses normal CAM mode and waits for background simulation before the separate simulation. Incomplete checks are reported explicitly."/>
+                                <TextBlock Text="Background validation takes priority over Job Mode. Enable background modeling and Machine collision detection in CAM settings."
+                                           TextWrapping="Wrap" FontSize="11" Foreground="{StaticResource LabelSecondaryBrush}" Margin="0,0,0,8"/>
+                                <CheckBox x:Name="KeepSuccessfulRecordings" Content="Keep recordings of successful tests" Margin="0,8"
+                                          ToolTip="Useful when investigating a project that is incorrectly reported as passing."/>
+                                <Border Height="1" Background="{StaticResource SeparatorBrush}" Margin="0,4"/>
+                                
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Only Recommended" VerticalAlignment="Center" Foreground="{StaticResource LabelPrimaryBrush}"/>
+                                    <CheckBox x:Name="OnlyRecommended" Grid.Column="1"/>
+                                </Grid>
+                                <Border Height="1" Background="{StaticResource SeparatorBrush}" Margin="0,4"/>
+                                
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Only Public" VerticalAlignment="Center" Foreground="{StaticResource LabelPrimaryBrush}"/>
+                                    <CheckBox x:Name="OnlyPublic" Grid.Column="1"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Simulation Section -->
+                        <TextBlock Text="SIMULATION" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource LabelSecondaryBrush}" Margin="0,8,0,12"/>
+                        
+                        <Border Background="{StaticResource BackgroundSecondaryBrush}" CornerRadius="10" Padding="16,8" Margin="0,0,0,16">
+                            <StackPanel>
+                                <!-- Simulation Speed Slider -->
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="180"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="40"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Simulation Speed %" VerticalAlignment="Center" Foreground="{StaticResource LabelPrimaryBrush}"/>
+                                    <Slider x:Name="SimulationSpeedSlider" Grid.Column="1" Minimum="0" Maximum="100" Value="100" 
+                                            VerticalAlignment="Center" Margin="8,0"
+                                            ValueChanged="SimulationSpeedSlider_ValueChanged"/>
+                                    <TextBlock x:Name="SimulationSpeedValue" Grid.Column="2" Text="100" VerticalAlignment="Center" 
+                                               HorizontalAlignment="Right" Foreground="{StaticResource LabelPrimaryBrush}" FontWeight="Medium"/>
+                                </Grid>
+                                <Border Height="1" Background="{StaticResource SeparatorBrush}" Margin="0,4"/>
+                                
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Check Gouges" VerticalAlignment="Center" Foreground="{StaticResource LabelPrimaryBrush}"/>
+                                    <CheckBox x:Name="CheckGouges" Grid.Column="1" IsChecked="True"/>
+                                </Grid>
+                                <Border Height="1" Background="{StaticResource SeparatorBrush}" Margin="0,4"/>
+                                
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Check Holder Collisions" VerticalAlignment="Center" Foreground="{StaticResource LabelPrimaryBrush}"/>
+                                    <CheckBox x:Name="CheckHolderCollisions" Grid.Column="1" IsChecked="True"/>
+                                </Grid>
+                                <Border Height="1" Background="{StaticResource SeparatorBrush}" Margin="0,4"/>
+                                
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Check Machine Collisions" VerticalAlignment="Center" Foreground="{StaticResource LabelPrimaryBrush}"/>
+                                    <CheckBox x:Name="CheckMachineCollisions" Grid.Column="1" IsChecked="True"/>
+                                </Grid>
+                                <Border Height="1" Background="{StaticResource SeparatorBrush}" Margin="0,4"/>
+                                
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Break on Stop Command" VerticalAlignment="Center" Foreground="{StaticResource LabelPrimaryBrush}"/>
+                                    <CheckBox x:Name="BreakOnStopCommand" Grid.Column="1"/>
+                                </Grid>
+                                <Border Height="1" Background="{StaticResource SeparatorBrush}" Margin="0,4"/>
+                                
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Break on End of Operation" VerticalAlignment="Center" Foreground="{StaticResource LabelPrimaryBrush}"/>
+                                    <CheckBox x:Name="BreakOnEndOfOperation" Grid.Column="1"/>
+                                </Grid>
+                                <Border Height="1" Background="{StaticResource SeparatorBrush}" Margin="0,4"/>
+                                
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Break on Errors" VerticalAlignment="Center" Foreground="{StaticResource LabelPrimaryBrush}"/>
+                                    <CheckBox x:Name="BreakOnErrors" Grid.Column="1"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Connection Section -->
+                        <TextBlock Text="CONNECTION" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource LabelSecondaryBrush}" Margin="0,8,0,12"/>
+                        
+                        <Border Background="{StaticResource BackgroundSecondaryBrush}" CornerRadius="10" Padding="16,8" Margin="0,0,0,16">
+                            <StackPanel>
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="120"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Base URL" VerticalAlignment="Center" Foreground="{StaticResource LabelPrimaryBrush}"/>
+                                    <TextBox x:Name="BaseUrl" Grid.Column="1"/>
+                                </Grid>
+                                <Border Height="1" Background="{StaticResource SeparatorBrush}" Margin="0,4"/>
+                                
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="120"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Login" VerticalAlignment="Center" Foreground="{StaticResource LabelPrimaryBrush}"/>
+                                    <TextBox x:Name="Login" Grid.Column="1"/>
+                                </Grid>
+                                <Border Height="1" Background="{StaticResource SeparatorBrush}" Margin="0,4"/>
+                                
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="120"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Password" VerticalAlignment="Center" Foreground="{StaticResource LabelPrimaryBrush}"/>
+                                    <PasswordBox x:Name="Password" Grid.Column="1"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Machine Section -->
+                        <TextBlock Text="MACHINE" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource LabelSecondaryBrush}" Margin="0,8,0,12"/>
+                        
+                        <Border Background="{StaticResource BackgroundSecondaryBrush}" CornerRadius="10" Padding="16,8" Margin="0,0,0,16">
+                            <StackPanel>
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="120"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Machine Type" VerticalAlignment="Center" Foreground="{StaticResource LabelPrimaryBrush}"/>
+                                    <TextBox x:Name="MachineType" Grid.Column="1"/>
+                                </Grid>
+                                <Border Height="1" Background="{StaticResource SeparatorBrush}" Margin="0,4"/>
+                                
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="120"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Machine Name" VerticalAlignment="Center" Foreground="{StaticResource LabelPrimaryBrush}"/>
+                                    <TextBox x:Name="MachineName" Grid.Column="1"/>
+                                </Grid>
+                                <Border Height="1" Background="{StaticResource SeparatorBrush}" Margin="0,4"/>
+                                
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="120"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Owner" VerticalAlignment="Center" Foreground="{StaticResource LabelPrimaryBrush}"/>
+                                    <TextBox x:Name="OwnerTextBox" Grid.Column="1"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Other Section -->
+                        <TextBlock Text="OTHER" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource LabelSecondaryBrush}" Margin="0,8,0,12"/>
+                        
+                        <Border Background="{StaticResource BackgroundSecondaryBrush}" CornerRadius="10" Padding="16,8" Margin="0,0,0,16">
+                            <StackPanel>
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Bin Data Version" VerticalAlignment="Center" Foreground="{StaticResource LabelPrimaryBrush}"/>
+                                    <TextBox x:Name="BinDataVersion" Grid.Column="1"/>
+                                </Grid>
+                                <Border Height="1" Background="{StaticResource SeparatorBrush}" Margin="0,4"/>
+                                
+                                <Grid Margin="0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Projects Before Restart" VerticalAlignment="Center" Foreground="{StaticResource LabelPrimaryBrush}"/>
+                                    <TextBox x:Name="CountOfTestedProjectsBeforeRestart" Grid.Column="1"/>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Filters Section -->
+                        <TextBlock Text="FILTERS" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource LabelSecondaryBrush}" Margin="0,8,0,12"/>
+                        
+                        <!-- Operations -->
+                        <Border Background="{StaticResource BackgroundSecondaryBrush}" CornerRadius="10" Padding="16,12" Margin="0,0,0,8">
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Operations" FontWeight="Medium" Foreground="{StaticResource LabelPrimaryBrush}" VerticalAlignment="Center"/>
+                                    <TextBox x:Name="OperationsInput" Grid.Column="1" 
+                                             Tag="Type and press Enter"
+                                             GotFocus="FilterInput_GotFocus" LostFocus="FilterInput_LostFocus"
+                                             KeyDown="OperationsInput_KeyDown"/>
+                                </Grid>
+                                <WrapPanel x:Name="OperationsPanel" Margin="0,8,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        
+                        <!-- Tool Types -->
+                        <Border Background="{StaticResource BackgroundSecondaryBrush}" CornerRadius="10" Padding="16,12" Margin="0,0,0,8">
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Tool Types" FontWeight="Medium" Foreground="{StaticResource LabelPrimaryBrush}" VerticalAlignment="Center"/>
+                                    <TextBox x:Name="ToolTypesInput" Grid.Column="1" 
+                                             Tag="Type and press Enter"
+                                             GotFocus="FilterInput_GotFocus" LostFocus="FilterInput_LostFocus"
+                                             KeyDown="ToolTypesInput_KeyDown"/>
+                                </Grid>
+                                <WrapPanel x:Name="ToolTypesPanel" Margin="0,8,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        
+                        <!-- Axes -->
+                        <Border Background="{StaticResource BackgroundSecondaryBrush}" CornerRadius="10" Padding="16,12" Margin="0,0,0,8">
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Axes" FontWeight="Medium" Foreground="{StaticResource LabelPrimaryBrush}" VerticalAlignment="Center"/>
+                                    <TextBox x:Name="AxesInput" Grid.Column="1" 
+                                             Tag="Type and press Enter"
+                                             GotFocus="FilterInput_GotFocus" LostFocus="FilterInput_LostFocus"
+                                             KeyDown="AxesInput_KeyDown"/>
+                                </Grid>
+                                <WrapPanel x:Name="AxesPanel" Margin="0,8,0,0"/>
+                            </StackPanel>
+                        </Border>
+                        
+                        <!-- Tags -->
+                        <Border Background="{StaticResource BackgroundSecondaryBrush}" CornerRadius="10" Padding="16,12" Margin="0,0,0,16">
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="100"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="Tags" FontWeight="Medium" Foreground="{StaticResource LabelPrimaryBrush}" VerticalAlignment="Center"/>
+                                    <TextBox x:Name="TagsInput" Grid.Column="1" 
+                                             Tag="Type and press Enter"
+                                             GotFocus="FilterInput_GotFocus" LostFocus="FilterInput_LostFocus"
+                                             KeyDown="TagsInput_KeyDown"/>
+                                </Grid>
+                                <WrapPanel x:Name="TagsPanel" Margin="0,8,0,0"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- Footer -->
+                <Grid Grid.Row="2" Margin="0,16,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBlock x:Name="StatusTextBlock" Text="Ready" FontSize="12" Foreground="{StaticResource LabelSecondaryBrush}" VerticalAlignment="Center"/>
+                    
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <Button x:Name="LoadSettingsBtn" Content="Load Settings" Click="LoadSettingsBtn_Click" Margin="0,0,8,0"/>
+                        <Button x:Name="BackupSettingsBtn" Content="Backup Settings" Click="BackupSettingsBtn_Click" Margin="0,0,8,0"/>
+                        <Button x:Name="SaveSettingsBtn" Content="Save Settings" Style="{StaticResource PrimaryButton}" Click="SaveSettingsBtn_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

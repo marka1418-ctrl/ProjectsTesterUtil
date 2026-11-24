@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "ProjectTestingUtility": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Program Files\\ENCY Software\\ENCY NB 3\\Bin64\\ency.exe\"",
+      "nativeDebugging": true
+    }
+  }
+}

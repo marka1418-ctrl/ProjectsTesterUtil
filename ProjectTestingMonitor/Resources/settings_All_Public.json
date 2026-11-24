@@ -1,0 +1,23 @@
+{
+  "LaunchCamTimeoutInSeconds": 20,
+  "OpenProjectTimeoutInSeconds": 900,
+  "TestProjectTimeoutInSeconds": 3600,
+  "KillCamProcessTimeoutInSeconds": 300,
+  "UseJobMode": true,
+  "ValidateBackgroundSimulation": false,
+  "UseSimulateAll": false,
+  "BinDataVersion": "2999",
+  "BaseUrl": "https://webservices.sprutcam.com",
+  "CountOfTestedProjectsBeforeRestart": 1,
+  "Login": "",
+  "Password": "",
+  "OnlyRecommended": false,
+  "OnlyPublic": true,
+  "MachineType": "",
+  "MachineName": "",
+  "Owner": 0,
+  "Operations": [],
+  "ToolTypes": [],
+  "Axes": [],
+  "Tags": []
+}

@@ -1,0 +1,79 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <!-- The release script supplies the freshly published tester. -->
+    <TesterExecutablePath Condition="'$(TesterExecutablePath)' == ''">$(MSBuildProjectDirectory)\Resources\ProjectTestingUtility.exe</TesterExecutablePath>
+    <FfmpegBundleDirectory Condition="'$(FfmpegBundleDirectory)' == ''">$(MSBuildProjectDirectory)\..\artifacts\third-party\ffmpeg</FfmpegBundleDirectory>
+
+  </PropertyGroup>
+
+  <!-- publish = один самодостаточный exe, без установленного рантайма -->
+  <PropertyGroup>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Resources\ProjectTestingUtility.exe" />
+    <None Remove="Resources\settings.json" />
+    <None Remove="Resources\settings_All_Public.json" />
+    <None Remove="Resources\settings_Recommended.json" />
+    <None Remove="Resources\settings_TestSuite.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="$(TesterExecutablePath)">
+      <LogicalName>ProjectTesterMonitor.Resources.ProjectTestingUtility.exe</LogicalName>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\settings.json" />
+    <EmbeddedResource Include="Resources\settings_All_Public.json" />
+    <EmbeddedResource Include="Resources\settings_Recommended.json" />
+    <EmbeddedResource Include="Resources\settings_TestSuite.json" />
+  </ItemGroup>
+
+  <ItemGroup Condition="Exists('$(FfmpegBundleDirectory)\ffmpeg.exe')">
+    <Content Include="$(FfmpegBundleDirectory)\**\*">
+      <Link>tools\ffmpeg\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
+  <Target Name="ValidateDiagnosticRelease" BeforeTargets="PrepareForBuild" Condition="'$(RequireDiagnosticBundle)' == 'true'">
+    <Error Condition="!Exists('$(TesterExecutablePath)')" Text="Publish ProjectTestingUtility first and supply TesterExecutablePath." />
+    <Error Condition="!Exists('$(FfmpegBundleDirectory)\ffmpeg.exe')" Text="The diagnostic release requires FFmpeg. Run scripts/Publish-Portable.ps1." />
+  </Target>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Management" Version="9.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="ResultsWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Update="SettingsWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+</Project>

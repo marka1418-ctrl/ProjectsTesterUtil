@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../ProjectTestingUtility/AppRunner.cs" Link="AppRunner.cs" />
+    <Compile Include="../../ProjectTestingUtility/Services/AttemptDiagnostics.cs" Link="AttemptDiagnostics.cs" />
+    <Compile Include="../../ProjectTestingUtility/Services/TestRetryPolicy.cs" Link="TestRetryPolicy.cs" />
+    <Compile Include="../../ProjectTestingUtility/Services/StageResultPolicy.cs" Link="StageResultPolicy.cs" />
+    <Compile Include="../../ProjectTestingUtility/Services/BackgroundSimulationConfiguration.cs" Link="BackgroundSimulationConfiguration.cs" />
+    <Compile Include="../../ProjectTestingUtility/Services/RunStatusReporter.cs" Link="RunStatusReporter.cs" />
+    <Compile Include="../../ProjectTestingUtility/Models/Settings.cs" Link="Models/Settings.cs" />
+    <Compile Include="../../ProjectTestingUtility/Models/TestResult.cs" Link="Models/TestResult.cs" />
+    <Compile Include="../../ProjectTestingUtility/Models/TestStageResult.cs" Link="Models/TestStageResult.cs" />
+    <Compile Include="../../ProjectTestingUtility/Models/TreeNode.cs" Link="Models/TreeNode.cs" />
+    <Compile Include="../../ProjectTestingUtility/Models/SearchCriteria.cs" Link="Models/SearchCriteria.cs" />
+    <Compile Include="../../ProjectTestingUtility/Models/ProjectVisibility.cs" Link="Models/ProjectVisibility.cs" />
+  </ItemGroup>
+</Project>
